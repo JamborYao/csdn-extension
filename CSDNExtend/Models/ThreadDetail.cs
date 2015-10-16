@@ -24,5 +24,6 @@ namespace CSDNExtend.Models
         public string Difficulty { get; set; }
         public string CustomLooking { get; set; }
         public string DayToAnswer { get; set; }
+        public string Contribution { get; set; }
     }
 }

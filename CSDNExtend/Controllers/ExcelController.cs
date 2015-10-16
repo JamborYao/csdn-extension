@@ -26,16 +26,21 @@ namespace CSDNExtend.Controllers
 
             Worksheet ws = (Worksheet)wb.Worksheets[1];
 
-            for (int r = 1; r < 101; r++) //r stands for ExcelRow and c for ExcelColumn
+            for (int r = 1; r < 5; r++) //r stands for ExcelRow and c for ExcelColumn
             {
 
                 // Excel row and column start positions for writing Row=1 and Col=1
 
-                for (int c = 1; c < 11; c++)
-
-                    ws.Cells[r, c] = "R" + r + "C" + c;
-
+                int c = 1;
+                ThreadDetail thread = GetThread();
+                Type t = thread.GetType();
+                foreach (var property in t.GetProperties())
+                {
+                    ws.Cells[r, c] = property.GetValue(thread, null);
+                    c++;
+                }
             }
+
 
 
             wb.Worksheets[1].Name = "MySheet";//Renaming the Sheet1 to MySheet
@@ -46,8 +51,12 @@ namespace CSDNExtend.Controllers
 
             xlApp.Quit();
         }
+        public int GetPorpertyNumber()
+        {
+            return 13;
+        }
 
-        public void GetThread()
+        public ThreadDetail GetThread()
         {
             ThreadDetail thread = new ThreadDetail();
             thread.Team = "1";
@@ -62,11 +71,12 @@ namespace CSDNExtend.Controllers
             thread.FirstReply = "null";
             thread.Labor = "24";
             thread.Replies = "3";
-            thread.CssAction = "test";
-            thread.Replied = "test";
+            thread.CssAction = "Answered";
+            thread.Replied = "2";
             thread.Difficulty = "test";
             thread.CustomLooking = "test";
             thread.DayToAnswer = "test";
+            return thread;
         }
     }
 }
