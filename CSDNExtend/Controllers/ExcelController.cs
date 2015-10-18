@@ -28,14 +28,32 @@ namespace CSDNExtend.Controllers
 
             for (int r = 1; r < 5; r++) //r stands for ExcelRow and c for ExcelColumn
             {
-
-                // Excel row and column start positions for writing Row=1 and Col=1
-
                 int c = 1;
                 ThreadDetail thread = GetThread();
+                string url = "";
                 Type t = thread.GetType();
                 foreach (var property in t.GetProperties())
                 {
+                    var attribute = property.GetCustomAttributes(true);
+                    if (attribute.Count() > 0)
+                    {
+                        if ((string)attribute[0].GetType().Name == "IsURLAttribute")
+                        {
+                            url = (string)property.GetValue(thread, null);
+                            continue;
+                        }                     
+                        if ((string)attribute[0].GetType().Name == "IsTitleAttribute")
+                        {
+                            ws.Hyperlinks.Add(ws.Cells[r, c], url);
+                        }
+                        
+                    }
+                    if (property.GetType().ToString() == "System.DateTime")
+                    {
+                        //Range rg = (Range)ws.Cells[1, 1];
+                        //rg.EntireColumn.NumberFormat = "MM/DD/YYYY";
+                        ws.Cells[r, c].NumberFormat = "m/d/yy";
+                    }
                     ws.Cells[r, c] = property.GetValue(thread, null);
                     c++;
                 }
@@ -67,7 +85,7 @@ namespace CSDNExtend.Controllers
             thread.TechCategory = "General Discussion";
             thread.IssueType = "Mooncake feature - General Discussion";
             thread.IR = "359";
-            thread.CreateOn = "2015-03-04 17:08:00.000";
+            thread.CreateOn = Convert.ToDateTime("2015-03-04 17:08:00.000");
             thread.FirstReply = "null";
             thread.Labor = "24";
             thread.Replies = "3";
