@@ -20,10 +20,10 @@ namespace CSDNExtend.Models
         public string TechCategory { get; set; }
         public string IssueType { get; set; }
         public string IR { get; set; }
-        public DateTime CreateOn { get; set; }
-        public string FirstReply { get; set; }
-        public string Labor { get; set; }
-        public string Replies { get; set; }
+        public DateTime? CreateOn { get; set; }
+        public DateTime? FirstReply { get; set; }
+        public double? Labor { get; set; }
+        public int Replies { get; set; }
         public string CssAction { get; set; }
         public string Replied { get; set; }
         public string Difficulty { get; set; }
