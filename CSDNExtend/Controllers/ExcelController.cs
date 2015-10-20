@@ -15,70 +15,79 @@ namespace CSDNExtend.Controllers
 {
     public class ExcelController : ApiController
     {
-        public void Get(string startDate,string endDate)
+        public string Get(string startDate, string endDate)
         {
-            SqlHelper sql = new SqlHelper(startDate,endDate);
-            List<ThreadDetail> list = sql.GetCSDNThreads();
-            Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
-
-            Workbook wb = xlApp.Workbooks.Add(XlWBATemplate.xlWBATWorksheet);
-
-            Worksheet ws = (Worksheet)wb.Worksheets[1];
-            int r = 1;
-            foreach (ThreadDetail thread in list)
+            string debug = "";
+            try
             {
-               
-                //int c = 1;
-                string url = "";
-                Type t = thread.GetType();
-                ws.Cells[r, 1] = thread.Team;
-                ws.Cells[r, 2] = thread.IsAnswered;
-                ws.Cells[r, 3] = thread.Owner;
-                ws.Cells[r, 4] = thread.Title;
-                ws.Hyperlinks.Add(ws.Cells[r, 4],thread.URL);
-                ws.Cells[r, 5] = thread.TechCategory;
-                ws.Cells[r, 6] = thread.IssueType;
-                ws.Cells[r, 7] = thread.IR;
-                ws.Cells[r, 8] = thread.CreateOn;
-                ws.Cells[r, 8].NumberFormat = "yyyy/m/d h:mm"; 
-                ws.Cells[r, 9] = thread.FirstReply;
-                ws.Cells[r, 9].NumberFormat = "yyyy/m/d h:mm";
-                ws.Cells[r, 10] = thread.Labor;
-                ws.Cells[r, 11] = thread.Replies;
-                ws.Cells[r, 12] = thread.CssAction;
-                ws.Cells[r, 13] = thread.Replied;
-                ws.Cells[r, 14] = thread.Difficulty;
-                ws.Cells[r, 15] = thread.CustomLooking;
-                ws.Cells[r, 16] = thread.DayToAnswer;
-                ws.Cells[r, 17] = thread.Contribution;
-                  
-                //foreach (var property in t.GetProperties())
-                //{
-                //    var attribute = property.GetCustomAttributes(true);
-                //    if (attribute.Count() > 0)
-                //    {
-                //        if ((string)attribute[0].GetType().Name == "IsURLAttribute")
-                //        {
-                //            url = (string)property.GetValue(thread, null);
-                //            continue;
-                //        }
-                //        if ((string)attribute[0].GetType().Name == "IsTitleAttribute")
-                //        {
-                //            ws.Hyperlinks.Add(ws.Cells[r, c], url);
-                //        }
+                SqlHelper sql = new SqlHelper(startDate, endDate);
+                List<ThreadDetail> list = sql.GetCSDNThreads();
+                Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
 
-                //    }
-                //    ws.Cells[r, c] = property.GetValue(thread, null);
-                //    FormatExcelCell(property, ws.Cells[r, c]);
-                //    c++;
-                //}
-                r++;
+                Workbook wb = xlApp.Workbooks.Add(XlWBATemplate.xlWBATWorksheet);
+
+                Worksheet ws = (Worksheet)wb.Worksheets[1];
+                int r = 1;
+
+                foreach (ThreadDetail thread in list)
+                {
+
+                    //int c = 1;
+                    //string url = "";
+                    //Type t = thread.GetType();
+                    ws.Cells[r, 1] = thread.Team;
+                    ws.Cells[r, 2] = thread.IsAnswered;
+                    ws.Cells[r, 3] = thread.Owner;
+                    ws.Cells[r, 4] = thread.Title;
+                    ws.Hyperlinks.Add(ws.Cells[r, 4], thread.URL);
+                    ws.Cells[r, 5] = thread.TechCategory;
+                    ws.Cells[r, 6] = thread.IssueType;
+                    ws.Cells[r, 7] = thread.IR;
+                    ws.Cells[r, 8] = thread.CreateOn;
+                    ws.Cells[r, 8].NumberFormat = "yyyy/m/d h:mm";
+                    ws.Cells[r, 9] = thread.FirstReply;
+                    ws.Cells[r, 9].NumberFormat = "yyyy/m/d h:mm";
+                    ws.Cells[r, 10] = thread.Labor;
+                    ws.Cells[r, 11] = thread.Replies;
+                    ws.Cells[r, 12] = thread.CssAction;
+                    ws.Cells[r, 13] = thread.Replied;
+                    ws.Cells[r, 14] = thread.Difficulty;
+                    ws.Cells[r, 15] = thread.CustomLooking;
+                    ws.Cells[r, 16] = thread.DayToAnswer;
+                    ws.Cells[r, 17] = thread.Contribution;
+
+                    //foreach (var property in t.GetProperties())
+                    //{
+                    //    var attribute = property.GetCustomAttributes(true);
+                    //    if (attribute.Count() > 0)
+                    //    {
+                    //        if ((string)attribute[0].GetType().Name == "IsURLAttribute")
+                    //        {
+                    //            url = (string)property.GetValue(thread, null);
+                    //            continue;
+                    //        }
+                    //        if ((string)attribute[0].GetType().Name == "IsTitleAttribute")
+                    //        {
+                    //            ws.Hyperlinks.Add(ws.Cells[r, c], url);
+                    //        }
+
+                    //    }
+                    //    ws.Cells[r, c] = property.GetValue(thread, null);
+                    //    FormatExcelCell(property, ws.Cells[r, c]);
+                    //    c++;
+                    //}
+                    r++;
+                }
+                wb.Worksheets[1].Name = "CSDN threads";//Renaming the Sheet1 to MySheet
+                wb.SaveAs("d:\\Report\\CSDNReport-" + DateTime.Now.ToString("yyyy-MM-dd-mmhhss") + ".xlsx");
+                wb.Close();
+                xlApp.Quit();
             }
-            wb.Worksheets[1].Name = "CSDN threads";//Renaming the Sheet1 to MySheet
-            wb.SaveAs("d:\\CSDNReport-"+DateTime.Now.ToString("yyyy-MM-dd")+".xlsx");
-            wb.Close();
-            xlApp.Quit();
-           
+            catch (Exception e)
+            {
+                debug += e.Message;
+            }
+            return debug;
         }
         // POST api/values
         public void Post([FromBody]string value)
@@ -110,7 +119,7 @@ namespace CSDNExtend.Controllers
             //            {
             //                ws.Hyperlinks.Add(ws.Cells[r, c], url);
             //            }
-                        
+
             //        }
             //        ws.Cells[r, c] = property.GetValue(thread, null);                   
             //        FormatExcelCell(property, ws.Cells[r,c]);
@@ -131,7 +140,7 @@ namespace CSDNExtend.Controllers
             if (isNullableType)
                 typeName = nullableType.FullName;
             else
-                typeName= property.PropertyType.FullName;
+                typeName = property.PropertyType.FullName;
 
             switch (typeName)
             {
@@ -172,7 +181,7 @@ namespace CSDNExtend.Controllers
 
         public void DownloadExcel()
         {
-         
+
         }
     }
 }
